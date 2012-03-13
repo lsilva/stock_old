@@ -1,0 +1,108 @@
+
+<h1><?=$this->title?></h1>
+<?php
+$form = $this->form2;
+## enctype='multipart/form-data'
+$html = '<form enctype="'.$form->getEnctype().'" action="'.$form->getAction().'" method="'.$form->getMethod().'"';
+$html.= 'name="'.$form->getName().'" id="'.$form->getName().'">';
+
+$html.= '	<table border="0" style="float:left;display:block;max-width:1000px">';
+
+$html.= ' 	<tr>';
+$html.= '			<td colspan="100%">';
+$html.= '				<input type="hidden" id="action" name="action" value="'.$this->action.'" />';
+$html.=         $form->cli_id;
+$html.= '				<div id="button" class="salvar" onclick="sendAction(this,\'submit\',true)"></div>';
+$html.= '				<div id="button" class="voltar" onclick="sendAction(this,\'back\')"></div>';
+$html.= '			</td>';
+$html.= ' 	</tr>';
+
+if($this->pes == "pj")
+  {
+  $html.= ' 	<tr>';
+  $html.= '			<td colspan="100%">'.$form->cli_pj_razao.'</td>';
+  $html.= ' 	</tr>';
+
+  $html.= ' 	<tr>';
+  $html.= '			<td colspan="100%">'.$form->cli_pj_fantasia.'</td>';
+  $html.= ' 	</tr>';
+
+  $html.= ' 	<tr>';
+  $html.= '			<td>'.$form->cli_pj_cnpj.'</td>';
+  $html.= '			<td>'.$form->cli_pj_ie.'</td>';
+  $html.= ' 	</tr>';
+  }
+else
+  {
+  $html.= ' 	<tr>';
+  $html.= '			<td colspan="100%">'.$form->cli_pf_nome.'</td>';
+  $html.= ' 	</tr>';
+
+  $html.= ' 	<tr>';
+  $html.= '			<td>'.$form->cli_pf_cpf.'</td>';
+  $html.= '			<td>'.$form->cli_pf_rg.'</td>';
+  $html.= ' 	</tr>';
+
+  $html.= ' 	<tr>';
+  $html.= '			<td>'.$form->cli_pj_cnpj.'</td>';
+  $html.= '			<td>'.$form->cli_pj_ie.'</td>';
+  $html.= ' 	</tr>';
+
+  $html.= ' 	<tr>';
+  $html.= '			<td colspan="100%">'.$form->cli_pf_sexo.'</td>';
+  $html.= ' 	</tr>';
+
+  $html.= ' 	<tr>';
+  $html.= '			<td>'.$form->cli_pf_dt_nascimento.'</td>';
+  $html.= '			<td>'.$form->cli_pf_estado_civil.'</td>';
+  $html.= ' 	</tr>';
+  }
+
+$html.= ' 	<tr>';
+$html.= '			<td colspan="100%">';
+
+$html.= '	 		<table border="1" width="100%">';
+$html.= ' 			<tr>';
+$html.= '					<td>'.$this->formContact->cnt_tipo.'</td>';
+$html.= '					<td>'.$this->formContact->cnt_valor.'</td>';
+$html.= '					<td width="20px"><div id="minButton" class="adicionar" onClick="openWindow(\''.BASE_URL.'/default/cliente-crud/add-contact\',\'Inserir Contato\')"></div></td>';
+$html.= ' 			</tr>';
+$html.= '	 		</table>';
+
+$html.= '			</td>';
+$html.= ' 	</tr>';
+
+#formContact
+$html.= '	 </table>';
+$html.= '</form>';
+
+$html.= '<style type="text/css">';
+$html.= 'dd{';
+$html.= 'padding:0px;';
+$html.= 'margin:0px 2px;';
+$html.= '}';
+$html.= 'dd input[text],select{';
+$html.= 'width: 100%;';
+$html.= '}';
+$html.= 'dd select{width: 100%;}';
+$html.= 'dt{';
+$html.= 'padding:0px 5px;';
+$html.= 'margin:0px 2px;';
+$html.= '}';
+$html.= 'dt *{';
+$html.= 'width: 99%;';
+$html.= '}';
+$html.= 'dd *{width: 99%;}';
+$html.= '#button{margin:0px 10px;display:block;height:26px;width:91px;float:left;}';
+$html.= '#button:hover, #minButton:hover{cursor: hand;cursor: pointer;}';
+$html.= '.voltar{background-image:url(\''.BASE_URL.'/public/image/voltar.gif\');}';
+$html.= '.salvar{background-image:url(\''.BASE_URL.'/public/image/salvar.gif\');}';
+$html.= '#minButton{margin:0px;margin-top:20px;margin-left:2px;display:block;height:17px;width:17px;float:left;}';
+$html.= '.adicionar{background-image:url(\''.BASE_URL.'/public/image/adicionar.gif\');}';
+$html.= '.visualizar{background-image:url(\''.BASE_URL.'/public/image/visualizar.gif\');}';
+$html.= '</style>';
+
+echo($html);
+
+?>
+<?=$this->js?>

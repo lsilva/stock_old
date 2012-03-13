@@ -1,0 +1,147 @@
+
+<h1><?=$this->title?></h1>
+<?php
+$form = $this->form2;
+$formProduto = $this->formProduto;
+$html = '<form enctype="'.$form->getEnctype().'" action="'.$form->getAction().'" method="'.$form->getMethod().'"';
+$html.= 'name="'.$form->getName().'" id="'.$form->getName().'">';
+$html.= $form->mov_id;
+$html.= '	<table border="1" style="float:left;display:block;max-width:1000px">';
+
+$html.= ' 	<tr>';
+$html.= '			<td colspan="100%">';
+$html.= '				<input type="hidden" id="action" name="action" value="'.$this->action.'" />';
+$html.= '				<div id="button" class="salvar" onclick="sendAction(this,\'submit\',true)"></div>';
+$html.= '				<div id="button" class="voltar" onclick="sendAction(this,\'back\')"></div>';
+$html.= '			</td>';
+$html.= ' 	</tr>';
+
+$html.= ' 	<tr>';
+$html.= '			<td>'.$form->cli_id.'</td>';
+$html.= '			<td width="20px"><div id="minButton" class="adicionar" onClick="openWindow(\''.BASE_URL.'/default/cliente-crud/insert\',\'Inserir Cliente\')"></div></td>';
+$html.= '			<td width="20px"><div id="minButton" class="visualizar"></div></td>';
+$html.= ' 	</tr>';
+
+if($this->tipo == 'ent')
+  {
+  $html.= ' 	<tr>';
+  $html.= ' 		<td colspan="100%">';
+  $html.= ' 			<table width="100%">';
+  $html.= ' 				</tr>';
+  $html.= '						<td>'.$form->mov_sequencia.'</td>';
+  $html.= '						<td>'.$form->mov_data.'</td>';
+  $html.= '						<td>'.$form->tmov_codigo.'</td>';
+  $html.= '						<td width="20px"><div id="minButton" class="adicionar" onClick="openWindow(\''.BASE_URL.'/default/tipomov-crud/insert\',\'Inserir Tipo de movimento\')"></div></td>';
+  $html.= '						<td width="20px"><div id="minButton" class="visualizar"></div></td>';
+  $html.= ' 				</tr>';
+  $html.= ' 			</table>';
+  $html.= ' 		</td>';
+  $html.= ' 	</tr>';
+  }
+
+$html.= ' 	<tr>';
+$html.= '			<td><input type="text" name="txtAutosuggest" id="txtAutosuggest" value="" autocomplete="off" />
+</td>';
+$html.= '			<td>'.$formProduto->pro_nome.'</td>';
+$html.= '			<td width="20px"><div id="minButton" class="adicionar" onClick="openWindow(\''.BASE_URL.'/default/produto-crud/insert\',\'Inserir produto\')"></div></td>';
+$html.= '			<td width="20px"><div id="minButton" class="visualizar"></div></td>';
+$html.= ' 	</tr>';
+
+/*
+$html.= ' 	<tr><td colspan="100%">';
+$html.= '			<table width="100%"><tr>';
+$html.= '				<td colspan="100%">'.$form->mrc_id.'</td>';
+$html.= '				<td width="20px"><div id="minButton" class="adicionar" onClick="openWindow(\''.BASE_URL.'/default/marca-crud/insert\',\'Inserir Marca\')"></div></td>';
+$html.= '			</tr></table>';
+$html.= ' 	</td></tr>';
+
+$html.= ' 	<tr>';
+$html.= '			<td>'.$form->pro_vlvenda.'</td>';
+$html.= '			<td>'.$form->pro_descontomax.'</td>';
+$html.= '			<td>'.$form->pro_custoatual.'</td>';
+$html.= '			<td>'.$form->pro_customedio.'</td>';
+$html.= ' 	</tr>';
+
+$html.= ' 	<tr>';
+$html.= '			<td>'.$form->pro_estoqueqtd.'</td>';
+$html.= '			<td>'.$form->pro_estoqueale.'</td>';
+$html.= '			<td>'.$form->pro_estoquemin.'</td>';
+$html.= '			<td><table width="100%"><tr>';
+$html.= '				<td>'.$form->pro_estoqueres.'</td>';
+$html.= '				<td width="20px"><div id="minButton" class="visualizar"></div></td>';
+$html.= '			</tr></table></td>';
+$html.= ' 	</tr>';
+
+$html.= ' 	<tr>';
+$html.= '			<td>'.$form->pro_peso.'</td>';
+$html.= '			<td>'.$form->pro_volume.'</td>';
+$html.= '			<td colspan="100%"><table width="100%"><tr>';
+$html.= '				<td colspan="2">'.$form->und_id.'</td>';
+$html.= '				<td width="20px"><div id="minButton" class="adicionar" onClick="openWindow(\''.BASE_URL.'/default/unidade-crud/insert\',\'Inserir Unidade\')"></div></td>';
+$html.= '			</tr></table></td>';
+$html.= ' 	</tr>';
+
+$html.= ' 	<tr>';
+$html.= '			<td colspan="2">'.$form->pro_descricao.'</td>';
+$html.= '			<td colspan="2">'.$form->pro_imagem.'</td>';
+$html.= ' 	</tr>';
+*/
+$html.= '	 </table>';
+$html.= '</form>';
+
+$html.= '<style type="text/css">';
+$html.= 'dd{';
+$html.= 'padding:0px;';
+$html.= 'margin:0px 2px;';
+$html.= '}';
+$html.= 'dd input[text],select{';
+$html.= 'width: 100%;';
+$html.= '}';
+$html.= 'dd select{width: 100%;}';
+$html.= 'dt{';
+$html.= 'padding:0px 5px;';
+$html.= 'margin:0px 2px;';
+$html.= '}';
+$html.= 'dt *{';
+$html.= 'width: 99%;';
+$html.= '}';
+$html.= 'dd *{width: 99%;}';
+$html.= '#button{margin:0px 10px;display:block;height:26px;width:91px;float:left;}';
+$html.= '#button:hover, #minButton:hover{cursor: hand;cursor: pointer;}';
+$html.= '.voltar{background-image:url(\''.BASE_URL.'/public/image/voltar.gif\');}';
+$html.= '.salvar{background-image:url(\''.BASE_URL.'/public/image/salvar.gif\');}';
+$html.= '#minButton{margin:0px;margin-top:20px;margin-left:2px;display:block;height:17px;width:17px;float:left;}';
+$html.= '.adicionar{background-image:url(\''.BASE_URL.'/public/image/adicionar.gif\');}';
+$html.= '.visualizar{background-image:url(\''.BASE_URL.'/public/image/visualizar.gif\');}';
+
+$html.= 'div.suggestions {';
+$html.= '    -moz-box-sizing: border-box;';
+$html.= '    box-sizing: border-box;';
+$html.= '    background-color: white;';
+$html.= '    border: 1px solid black;';
+$html.= '    position: absolute;';
+$html.= '}';
+
+$html.= 'div.suggestions div {';
+$html.= '    cursor: default;';
+$html.= '    padding: 0px 3px;';
+$html.= '}';
+
+$html.= 'div.suggestions div.current {';
+$html.= '    background-color: #3366cc;';
+$html.= '    color: white;';
+$html.= '}';
+
+$html.= '</style>';
+
+$html.= '<script type="text/javascript" src="'.BASE_URL.'/public/js/auto_suggest.js"></script>';
+$html.= '		<script type="text/javascript">
+		{
+			window.onload = function () {
+				var oTextbox = new AutoSuggestControl(document.getElementById("txtAutosuggest"), new SuggestionProvider());
+			}
+		}
+		</script>';
+echo($html);
+
+?>

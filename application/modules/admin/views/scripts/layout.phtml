@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="<?php echo BASE_URL?>/public/js/dojo/dojo/dojo.js"></script>
+
+<script type="text/javascript">
+//Mascara de Entrada
+function mascara(o,f){
+	v_obj=o
+	v_fun=f
+	setTimeout("execmascara()",1)
+}
+
+function execmascara(){
+	v_obj.value=v_fun(v_obj.value)
+}
+
+//Input monetária do inputbox
+function FormatNumber(input,max){
+	var text=input;
+	text.style.textAlign='right';
+	text.setAttribute('maxlength',max);
+	text.onkeydown = function(oEvent) {
+	  this.selectionStart = this.value.length;  //Posicionar o cursor no inicio do campo
+	  this.selectionEnd = this.value.length;    //Posicionar o cursor no inicio do campo
+	  oEvent = oEvent || window.event;// Fix para IE
+	  var iKeyCode = oEvent.keyCode;// Código ASCII da tecla pressionada
+	  // Checagem se números || backspace || TAB || enter
+	  if((iKeyCode>=48 && iKeyCode<=57)||(iKeyCode>=96 && iKeyCode<=105)|| iKeyCode == 8 || iKeyCode == 9 || iKeyCode == 13){
+	    mascara(this,Moeda);
+	  }else{
+	    return false;
+	  }
+	}
+}
+//Repetir caracteres
+function str_repeat (input,multiplier) {
+	//@input      = Caractere para repetir
+	//@multiplier = Número de vezes para repetir
+	return new Array(multiplier+1).join(input);
+}
+
+function init()
+	{
+//	echo(document.getElementsByTagName('form')[0]);
+
+	var frm = document.getElementsByTagName('form')[0];
+	if(!frm)return false;
+	frm.setAttribute('onSubmit','return verificaForm(this);');
+	for (var i = 0; i < frm.elements.length; i++)
+		{
+		var element = frm.elements[i];
+		switch(element.getAttribute('data'))
+			{
+		case 'cpf':
+			element.setAttribute('onkeypress','mascara(this,cpf)');
+			element.style.textAlign='right';
+			break;
+		case 'cnpj':
+			element.setAttribute('onkeypress','mascara(this,cnpj)');
+			element.style.textAlign='right';
+			break;
+		case 'telefone':
+			element.setAttribute('onkeypress','mascara(this,telefone)');
+			element.style.textAlign='right';
+			break;
+		case 'data':
+			element.setAttribute('onkeypress','mascara(this,data)');
+			element.style.textAlign='right';
+			break;
+		case 'cep':
+			element.setAttribute('onkeypress','mascara(this,cep)');//
+			element.style.textAlign='right';
+			break;
+			}
+		if(element.getAttribute('0')=='NotEmpty')
+			element.setAttribute('title','*');
+
+	  }
+	}
+
+/*Função que padroniza CEP*/
+function cep(v){
+    v=v.replace(/D/g,"")
+    v=v.replace(/^(\d{5})(\d)/,"$1-$2")
+    return v
+}
+
+function cpf(v)
+	{
+  v=v.replace(/\D/g,"");                    //Remove tudo o que não é dígito
+  v=v.replace(/(\d{3})(\d)/,"$1.$2");       //Coloca um ponto entre o terceiro e o quarto dígitos
+  v=v.replace(/(\d{3})(\d)/,"$1.$2");       //Coloca um ponto entre o terceiro e o quarto dígitos
+                                             //de novo (para o segundo bloco de números)
+  v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2"); //Coloca um hífen entre o terceiro e o quarto dígitos
+  return v;
+	}
+
+/*Função que padroniza CNPJ*/
+function cnpj(v){
+    v=v.replace(/\D/g,"")
+    v=v.replace(/^(\d{2})(\d)/,"$1.$2")
+    v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3")
+    v=v.replace(/\.(\d{3})(\d)/,".$1/$2")
+    v=v.replace(/(\d{4})(\d)/,"$1-$2")
+    return v
+}
+
+/*Função que padroniza telefone (11) 4184-1241*/
+function telefone(v){
+    v=v.replace(/\D/g,"")
+    v=v.replace(/^(\d\d)(\d)/g,"($1) $2")
+    v=v.replace(/(\d{4})(\d)/,"$1-$2")
+    return v
+}
+
+/*Função que padroniza DATA*/
+function data(v){
+    v=v.replace(/\D/g,"")
+    v=v.replace(/(\d{2})(\d)/,"$1/$2")
+    v=v.replace(/(\d{2})(\d)/,"$1/$2")
+    return v
+}
+
+//Mascara de entrada monetária do inputbox
+function monetaria(v){
+	var str=v;
+	str=str.replace(/\D/g,"");
+	if(str.length<3)str=str_repeat(0,3-str.length)+str;
+	var dec=str.substr(str.length-2);
+	var inteiro=str.substring(0,str.length-2);
+	for(var i=0;i<inteiro.length;i++){
+	  var unit = inteiro.substr(i,1);
+	  if(unit!=0 || i==inteiro.length-1){
+	    inteiro=inteiro.substr(i,inteiro.length);
+	    break;
+	  }
+	}
+	if(inteiro.length>3){
+	  var cent=inteiro.substr(str.length-5);
+	  var mil=inteiro.substr(0,str.length-5);
+	  inteiro=mil+"."+cent;
+	}
+	var number = inteiro+","+dec;
+	return number;
+}
+
+dojo.addOnLoad(init);
+/**********************************/
+
+/******** VALIDA FORMULÁRIO ********/
+  function verificaForm(form){
+    var frm = form;
+    if(!frm)return false;
+    for (var i = 0; i < frm.elements.length; i++){
+      if ( (frm.elements[i].title.substr(0,1)) == "*" ){
+        if (frm.elements[i].value == ""){
+          alert("O campo '"+frm.elements[i].title.substr(1,(frm.elements[i].title.length))+"' é de preenchimento obrigatório!");
+          frm.elements[i].style.backgroundColor = "#ffffcc";
+          frm.elements[i].focus();
+          return false;
+          break;
+        }else{
+          frm.elements[i].style.backgroundColor = "#ffffff";
+        }
+      }
+    }
+    return true;
+  }
+/******** VALIDA FORMULÁRIO(FIM) ********/
+function echo(str) {
+  var content = document.getElementById('testResults');
+  content.innerHTML = content.innerHTML+'<br>'+str;
+
+  //document.write(str);
+}
+
+function dump(theObj, doreturn)
+{
+
+ var text = "";
+ text += "<ul>";
+ if(theObj != null && (theObj.constructor == Array || theObj.constructor == Object))
+ {
+     for(var p in theObj)
+     {
+    if (theObj[p] == null)
+      continue;
+
+         if(theObj[p].constructor == Array || theObj[p].constructor == Object)
+         {
+           text += ("<li>["+p+"] => "+typeof(theObj)+"</li>\n");
+           text += ("<ul>\n");
+             text += dump(theObj[p], doreturn);
+             text += ("</ul>\n");
+
+         }
+         else
+         {
+       if (!/^function/i.test(theObj[p]))
+         text += ("<li>["+p+"] => " + entity_encode(theObj[p]) + "</li>\n");
+       else
+         text += ("<li>["+p+"] => function " + p + "() {} </li>\n");
+         }
+     }
+ }
+ else
+	  text += ("<li>"+typeof(theObj)+" => "+entity_encode(theObj)+"</li>\n");
+
+ text += ("</ul>\n");
+
+ if (doreturn)
+   return text;
+ else
+   document.write(text);
+}
+
+function entity_encode(str) {
+	if(str==null) return null;
+	//alert(tyopeof(str));
+  str = str.toString();
+  return str.replace(/&/g, "&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+}
+/*****************************/
+
+</script>
+</head>
+<body>
+<div style="float:left;display:block;border:1pt red solid;">
+  <h2>Menu do sistema</h2>
+  <h4>
+  <ul>
+    <li><a href="/redeworking/cliente-crud/insert?pes=pf">Pessoa Física</a></li>
+    <li><a href="/redeworking/cliente-crud/insert?pes=pj">Pessoa Jurídica</a></li>
+  </ul>
+  <h4><a href="/redeworking/usuario-crud/insert">Trocar Senha</a></h4>
+  <h4><a href="/redeworking/contato-crud/insert">Contatos</a></h4>
+  <h4><a href="/redeworking/endereco-crud/insert">Endereços</a></h4>
+</div>
+<div id="content" style="float:left;display:block;border:1pt green solid;padding:15px;">
+  <?=$this->layout()->content?>
+</div>
+<div id='testResults' style='display:block;float:left;width:100%;background:black;color:lightgreen;padding:15px;margin:10px;'></div>
+</body>
+</html>

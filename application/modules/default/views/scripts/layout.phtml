@@ -1,0 +1,538 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="<?php echo BASE_URL?>/public/js/jquery.js"></script>
+<script type="text/javascript" src="<?php echo BASE_URL?>/public/js/autocomplete.jquery.js"></script>
+
+<script type="text/javascript" src="<?php echo BASE_URL?>/public/js/zXml.js"></script>
+<script type="text/javascript" src="<?php echo BASE_URL?>/public/js/bibliotecaAjax.js"></script>
+<script type="text/javascript" src="<?php echo BASE_URL?>/public/js/popup.js"></script>
+
+<script type="text/javascript">
+var path_url = '<?=HTTP_ROOT?>';
+function openWindow(url,title){
+	window.location = url;
+	//ExibirJanela(title);
+	//var html = requisicaoHTTP('get',url,true);
+}
+
+function sendAction(obj,type,ajax){
+  switch(type){
+    case "submit":
+      var newObj = obj.parentNode;
+      var nextObj = true;
+      var segure = 0;
+      while(nextObj){
+    	  segure++;
+        //IF de segurança
+        if(segure == 10){
+          alert('Estrouro de nível');
+          break;
+        }
+    	  if(newObj.tagName.toUpperCase() != 'FORM'){
+    		  var newObj = newObj.parentNode;
+          continue;
+    	  }
+        var form = newObj;
+        break;
+      }
+      if(form){
+    	  if(validaForm(form))
+      	  {
+          if(ajax)
+        	  enviaDados(form,form.getAttribute('action'));
+          else
+            {
+          	alert('Sem AJAX');
+          	form.submit;
+            }
+      	  }
+    	  else
+           return;
+      }
+      break;
+    case "back":
+    	history.back();
+      break;
+  }
+}
+
+//Mascara de Entrada
+function mascara(o,f){
+	v_obj=o
+	v_fun=f
+	setTimeout("execmascara()",1)
+}
+
+function execmascara(){
+	v_obj.value=v_fun(v_obj.value)
+}
+
+//Input monet�ria do inputbox
+function FormatNumber(input,max){
+	var text=input;
+	text.style.textAlign='right';
+	text.setAttribute('maxlength',max);
+	text.onkeydown = function(oEvent) {
+	  this.selectionStart = this.value.length;  //Posicionar o cursor no inicio do campo
+	  this.selectionEnd = this.value.length;    //Posicionar o cursor no inicio do campo
+	  oEvent = oEvent || window.event;// Fix para IE
+	  var iKeyCode = oEvent.keyCode;// C�digo ASCII da tecla pressionada
+	  // Checagem se n�meros || backspace || TAB || enter
+	  if((iKeyCode>=48 && iKeyCode<=57)||(iKeyCode>=96 && iKeyCode<=105)|| iKeyCode == 8 || iKeyCode == 9 || iKeyCode == 13){
+	    mascara(this,Moeda);
+	  }else{
+	    return false;
+	  }
+	}
+}
+//Repetir caracteres
+function str_repeat (input,multiplier) {
+	//@input      = Caractere para repetir
+	//@multiplier = N�mero de vezes para repetir
+	return new Array(multiplier+1).join(input);
+}
+
+/******** VALIDA FORMUL�RIO ********/
+function validaForm(form){
+  var frm = form;
+  if(!frm)return false;
+  for (var i = 0; i < frm.elements.length; i++){
+	  var required = frm.elements[i].getAttribute('required');
+    if (required=='true'){
+      if (frm.elements[i].value == ""){
+        alert("O campo '"+frm.elements[i].title+"' é de preenchimento obrigatório!");
+        frm.elements[i].style.backgroundColor = "#ffffcc";
+        frm.elements[i].focus();
+        return false;
+        break;
+      }else{
+        frm.elements[i].style.backgroundColor = "#ffffff";
+      }
+    }
+  }
+  return true;
+}
+/******** VALIDA FORMUL�RIO(FIM) ********/
+
+function init()
+	{
+	var frm = document.getElementsByTagName('form')[0];
+	if(frm)
+    {
+  	for (var i = 0; i < frm.elements.length; i++)
+  		{
+  		var element = frm.elements[i];
+  		switch(element.getAttribute('data'))
+  			{
+    		case 'cpf':
+    			element.setAttribute('onkeypress','mascara(this,cpf)');
+    			element.style.textAlign='right';
+    			break;
+    		case 'cnpj':
+    			element.setAttribute('onkeypress','mascara(this,cnpj)');
+    			element.style.textAlign='right';
+    			break;
+    		case 'telefone':
+    			element.setAttribute('onkeypress','mascara(this,telefone)');
+    			element.style.textAlign='right';
+    			break;
+    		case 'data':
+    			element.setAttribute('onkeypress','mascara(this,data)');
+    			element.style.textAlign='right';
+    			break;
+    		case 'cep':
+    			element.setAttribute('onkeypress','mascara(this,cep)');
+    			element.style.textAlign='right';
+    			break;
+        case 'money':
+         element.setAttribute('onkeypress','mascara(this,money)');
+         element.style.textAlign='right';
+         break;
+       case 'float':
+         element.setAttribute('onkeypress','mascara(this,float)');
+         element.style.textAlign='right';
+         break;
+       case 'integer':
+         element.setAttribute('onkeypress','mascara(this,integer)');
+         element.style.textAlign='right';
+         break;
+         }
+  		if (element.getAttribute('data') && element.value!="") eval("element.value = "+element.getAttribute('data')+"(element.value);");
+  	  }
+    }
+	}
+
+/*Fun��o que padroniza CEP*/
+function cep(v){
+    v=v.replace(/D/g,"")
+    v=v.replace(/^(\d{5})(\d)/,"$1-$2")
+    return v
+}
+
+function cpf(v)
+	{
+  v=v.replace(/\D/g,"");                    //Remove tudo o que n�o � d�gito
+  v=v.replace(/(\d{3})(\d)/,"$1.$2");       //Coloca um ponto entre o terceiro e o quarto d�gitos
+  v=v.replace(/(\d{3})(\d)/,"$1.$2");       //Coloca um ponto entre o terceiro e o quarto d�gitos
+                                             //de novo (para o segundo bloco de n�meros)
+  v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2"); //Coloca um h�fen entre o terceiro e o quarto d�gitos
+  return v;
+	}
+
+/*Fun��o que padroniza CNPJ*/
+function cnpj(v){
+    v=v.replace(/\D/g,"")
+    v=v.replace(/^(\d{2})(\d)/,"$1.$2")
+    v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3")
+    v=v.replace(/\.(\d{3})(\d)/,".$1/$2")
+    v=v.replace(/(\d{4})(\d)/,"$1-$2")
+    return v
+}
+
+/*Fun��o que padroniza telefone (11) 4184-1241*/
+function telefone(v){
+    v=v.replace(/\D/g,"")
+    v=v.replace(/^(\d\d)(\d)/g,"($1) $2")
+    v=v.replace(/(\d{4})(\d)/,"$1-$2")
+    return v
+}
+
+/*Fun��o que padroniza DATA*/
+function data(v){
+    v=v.replace(/\D/g,"")
+    v=v.replace(/(\d{2})(\d)/,"$1/$2")
+    v=v.replace(/(\d{2})(\d)/,"$1/$2")
+    return v
+}
+
+/*Fun��o que padroniza nros Float 0.00*/
+function float(v){
+    v=v.replace(/\D/g,"")
+    v=v.replace(/^0/g,"")
+    if(v.length<3)
+      while(v.length<3) v="0"+v
+    v=v.replace(/(\d{0,})(\d{2})/,"$1.$2")
+    return v
+}
+
+function integer(v){
+    v=v.replace(/\D/g,"")
+    return v
+}
+
+//Mascara de entrada monet�ria do inputbox
+function money(v){
+	var str=v;
+	str=str.replace(/\D/g,"");
+	if(str.length<3)str=str_repeat(0,3-str.length)+str;
+	var dec=str.substr(str.length-2);
+	var inteiro=str.substring(0,str.length-2);
+	for(var i=0;i<inteiro.length;i++){
+	  var unit = inteiro.substr(i,1);
+	  if(unit!=0 || i==inteiro.length-1){
+	    inteiro=inteiro.substr(i,inteiro.length);
+	    break;
+	  }
+	}
+	if(inteiro.length>3){
+	  var cent=inteiro.substr(str.length-5);
+	  var mil=inteiro.substr(0,str.length-5);
+	  inteiro=mil+"."+cent;
+	}
+	var number = inteiro+","+dec;
+	return number;
+}
+
+function str_repeat(s, n){
+    var a = [];
+    while(a.length < n){
+        a.push(s);
+    }
+    return a.join('');
+}
+//dojo.addOnLoad(init);
+window.onload=function() {init();}
+/******** VALIDA FORMUL�RIO ********/
+function verificaForm(form){
+  var frm = form;
+  if(!frm)return false;
+  for (var i = 0; i < frm.elements.length; i++){
+    if ( (frm.elements[i].title.substr(0,1)) == "*" ){
+      if (frm.elements[i].value == ""){
+        alert("O campo '"+frm.elements[i].title.substr(1,(frm.elements[i].title.length))+"' é de preenchimento obrigatório!");
+        frm.elements[i].style.backgroundColor = "#ffffcc";
+        frm.elements[i].focus();
+        return false;
+        break;
+      }else{
+        frm.elements[i].style.backgroundColor = "#ffffff";
+      }
+    }
+  }
+  return true;
+}
+/******** VALIDA FORMUL�RIO(FIM) ********/
+
+function trataDados(){
+	alert(ajax.responseText);
+	var resposta = ajax.responseXML;
+	var typeMessage;
+  if(resposta)
+    typeMessage = resposta.getElementsByTagName('root')[0].getAttribute('type');
+  else
+  {
+  info =  ajax.responseText;
+  document.getElementById('conteudoDiv').innerHTML=info;
+  }
+
+  switch(typeMessage)
+	  {
+  	case 'ValidError':
+  	  var message = 'Houve erro ao enviar o formulário.\nPor favor, corrija os itens abaixo:\n\n';
+  	  var campo = resposta.getElementsByTagName('root')[0].getElementsByTagName('campo');
+  	  for(var i = 0; i<campo.length; i++)
+	  	  {
+  			message+=campo[i].getAttribute('value')+":\n";
+  			var err = campo[i].getElementsByTagName('error');
+  			for(var j = 0; j<err.length; j++)
+	  			{
+  				message+="\t"+err[j].getAttribute('message')+"\n";
+	  			}
+  			message+="\n";
+	  	  }
+  	  alert(message);
+  	  break;
+  	case 'Sucess':
+  	  alert('Cadastro realizado com sucesso');
+  	  break;
+  	case 'errorMessage':
+  	  alert(resposta.getElementsByTagName('root')[0].getElementsByTagName('message')[0].getAttribute('value'));
+  	  break;
+  	case 'cidade':
+  	  populateCidade(resposta);
+      break;
+//    default:
+	  }
+  //info =  ajax.responseText;
+  //info = ajax.responseXML;
+  //document.getElementById(content).innerHTML=info;
+}
+
+function sendUF(uf)
+	{
+	url = 'http://localhost/return_cep.php?type=cidade&limit=0&field=codigo,descricao&uf='+uf;
+	requisicaoHTTP('get',url,true);
+	}
+
+function populateCidade(docXML)
+	{
+	var estados = docXML.getElementsByTagName('root')[0].getElementsByTagName('estado');
+	var select_cidade = document.getElementById('esc_cidade');
+
+	while( select_cidade.options.length > 0)
+		select_cidade.remove(0);
+
+  var option = document.createElement('option');
+  option.setAttribute('value','');
+  option.innerHTML = 'Selecione uma cidade';
+  select_cidade.appendChild(option);
+
+	for(var i =0;i<estados.length; i++)
+		{
+		var cidades = estados[i].getElementsByTagName('cidade');
+		for(var j =0;j<cidades.length; j++)
+			{
+		  var option = document.createElement('option');
+		  option.setAttribute('value',cidades[j].getAttribute('codigo'));
+		  option.innerHTML = cidades[j].getAttribute('descricao');
+		  select_cidade.appendChild(option);
+			}
+		}//
+	}
+
+/**********************************/
+function echo(str) {
+  var content = document.getElementById('testResults');
+  content.innerHTML = content.innerHTML+'<br>'+str;
+
+  //document.write(str);
+}
+
+function dump(theObj, doreturn)
+{
+
+ var text = "";
+ text += "<ul>";
+ if(theObj != null && (theObj.constructor == Array || theObj.constructor == Object))
+ {
+     for(var p in theObj)
+     {
+    if (theObj[p] == null)
+      continue;
+
+         if(theObj[p].constructor == Array || theObj[p].constructor == Object)
+         {
+           text += ("<li>["+p+"] => "+typeof(theObj)+"</li>\n");
+           text += ("<ul>\n");
+             text += dump(theObj[p], doreturn);
+             text += ("</ul>\n");
+
+         }
+         else
+         {
+       if (!/^function/i.test(theObj[p]))
+         text += ("<li>["+p+"] => " + entity_encode(theObj[p]) + "</li>\n");
+       else
+         text += ("<li>["+p+"] => function " + p + "() {} </li>\n");
+         }
+     }
+ }
+ else
+	  text += ("<li>"+typeof(theObj)+" => "+entity_encode(theObj)+"</li>\n");
+
+ text += ("</ul>\n");
+
+ if (doreturn)
+   return text;
+ else
+   document.write(text);
+}
+
+function entity_encode(str) {
+	if(str==null) return null;
+	//alert(tyopeof(str));
+  str = str.toString();
+  return str.replace(/&/g, "&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+}
+/*****************************/
+
+</script>
+<style type="text/css">
+body {
+  margin:0pt;
+  padding:0pt;
+  font-family:verdana, arial, Helvetica, sans-serif;
+  font-size:10pt;
+}
+
+table * {
+  //margin:0pt auto;
+  padding:0pt;
+  list-style:none;
+  //border:0pt;
+  //vertical-align:baseline;
+}
+/************ Janela Pop-UP ************/
+#ExibirJanela{
+ display:block;
+ border:solid 1pt pink;
+ background:url('<?php echo BASE_URL?>/public/image/back_01.png');
+ position:absolute;
+ top:0px;
+ left:0px;
+ width:100%;
+ height:100%;
+}
+
+#elementChild{
+ display:table;
+ border:solid 1pt pink;
+ background-color:white;
+ width:300pt;
+ position:relative;
+ top:80px;
+ left:0px;
+  padding:1pt;
+}
+
+#tituloDiv{
+  border:solid 1pt green;
+  height:20px;
+  width:95%;
+  display:block;
+  float:left;
+  background-color:#6FC0BD;
+}
+
+#tituloExit{
+  width:4%;
+  height:20px;
+  display:block;
+  float:right;
+  text-align:center;
+  border:solid 1pt red;
+  cursor:pointer;
+  background-image:url('<?php echo BASE_URL?>/public/image/pt_red.gif');
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color:#00473F;
+}
+
+#conteudoDiv{
+  width:100%;
+  min-height:150pt;
+  background-color:silver;
+  display:block;
+  float:left;
+}
+
+</style>
+</head>
+<body>
+<div id='errorResults' style='display:block;float:left;width:100%;background:red;color:white;font-weight:bold;padding:15px;margin:10px;'>
+<?php
+	echo Fgsl_Session_Namespace::get('mensagem');
+	Fgsl_Session_Namespace::set('mensagem','');
+?>
+
+</div>
+<div style="float:left;display:block;border:1pt red solid;">
+  <h4><a href="index/logout">Logout</a></h4>
+  <h2>Menu do sistema</h2>
+  <h4>Movimentação</h4>
+  <ul>
+    <li><a href="<?=HTTP_ROOT?>/movimento-crud/list?tipo=ent">Entrada</a></li>
+    <li><a href="<?=HTTP_ROOT?>/movimento-crud/list?tipo=sai">Saída</a></li>
+    <li><a href="<?=HTTP_ROOT?>/movimento-crud/list?tipo=est">Estorno</a></li>
+  </ul>
+  <h4>Clientes</h4>
+  <ul>
+    <li><a href="<?=HTTP_ROOT?>/cliente-crud/index?pes=pf">Pessoa Física</a></li>
+    <li><a href="<?=HTTP_ROOT?>/cliente-crud/index?pes=pj">Pessoa Jurídica</a></li>
+  </ul>
+
+  <h4><a href="<?=HTTP_ROOT?>/tipomov-crud">Tipo de movimento</a></h4>
+  <h4><a href="<?=HTTP_ROOT?>/produto-crud">Produto</a></h4>
+  <h4><a href="<?=HTTP_ROOT?>/unidade-crud">Unidade</a></h4>
+  <h4><a href="<?=HTTP_ROOT?>/marca-crud">Marca</a></h4>
+  <h4><a href="<?=HTTP_ROOT?>/usuario-crud/edit">Trocar Senha</a></h4>
+  <h4><a href="<?=HTTP_ROOT?>/contato-crud/edit">Contatos</a></h4>
+  <h4><a href="/redeworking/endereco-crud/insert">Endereços</a></h4>
+  <h4>Administrativo</h4>
+  <ul>
+    <li><a href="/redeworking/papel-crud/">Cadastro Papeis</a></li>
+    <li><a href="/redeworking/papel-funcionario/">Papéis de usuários</a></li>
+    <li><a href="/redeworking/acesso-crud/">Cadastro Recursos</a></li>
+    <li><a href="/redeworking/acesso-papel/">Acessos de um Papel</a></li>
+  </ul>
+</div>
+<div id="content" style="float:left;display:block;border:1pt green solid;padding:15px;">
+  <?=$this->layout()->content?>
+</div>
+<div id='testResults' style='display:block;float:left;width:100%;background:black;color:lightgreen;padding:15px;margin:10px;'>
+<?php
+		$acl = Fgsl_Session_Namespace::get('acl');
+		if($acl)
+			{
+			$roles = $acl->getRoles();
+			var_dump($roles);
+			}
+		else
+			echo("Not Roles");
+?>
+</div>
+</body>
+</html>

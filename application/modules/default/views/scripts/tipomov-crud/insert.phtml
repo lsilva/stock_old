@@ -1,0 +1,66 @@
+
+<h1><?=$this->title?></h1>
+<?php
+$form = $this->form2;
+## enctype='multipart/form-data'
+$html = '<form enctype="'.$form->getEnctype().'" action="'.$form->getAction().'" method="'.$form->getMethod().'"';
+$html.= 'name="'.$form->getName().'" id="'.$form->getName().'">';
+$html.= $form->tmv_id;
+$html.= '	<table border="0" style="float:left;display:block;max-width:1000px">';
+
+$html.= ' 	<tr>';
+$html.= '			<td colspan="100%">';
+$html.= '				<input type="hidden" id="action" name="action" value="'.$this->action.'" />';
+$html.= '				<div id="button" class="salvar" onclick="sendAction(this,\'submit\',true)"></div>';
+$html.= '				<div id="button" class="voltar" onclick="sendAction(this,\'back\')"></div>';
+$html.= '			</td>';
+$html.= ' 	</tr>';
+
+$html.= ' 	<tr>';
+$html.= '			<td colspan="100%">'.$form->tmv_descricao.'</td>';
+$html.= ' 	</tr>';
+
+$html.= ' 	<tr>';
+$html.= '			<td colspan="100%">'.$form->tmv_tipo.'</td>';
+$html.= '			<td>&nbsp;</td>';
+$html.= ' 	</tr>';
+
+$html.= ' 	<tr>';
+$html.= '			<td>'.$form->tmv_estorno.'</td>';
+$html.= '			<td>'.$form->tmv_customedio.'</td>';
+$html.= '			<td>'.$form->tmv_custoatual.'</td>';
+$html.= ' 	</tr>';
+
+$html.= '	 </table>';
+$html.= '</form>';
+
+$html.= '<style type="text/css">';
+$html.= 'dd{';
+$html.= 'padding:0px;';
+$html.= 'margin:0px 2px;';
+$html.= '}';
+$html.= 'dd input[text],select{';
+$html.= 'width: 100%;';
+$html.= '}';
+$html.= 'dd select{width: 100%;}';
+$html.= 'dt{';
+$html.= 'padding:0px 5px;';
+$html.= 'margin:0px 2px;';
+$html.= '}';
+$html.= 'dt *{';
+$html.= 'width: 99%;';
+$html.= '}';
+$html.= 'dd *{width: 99%;}';
+$html.= '#button{margin:0px 10px;display:block;height:26px;width:91px;float:left;}';
+$html.= '#button:hover, #minButton:hover{cursor: hand;cursor: pointer;}';
+$html.= '.voltar{background-image:url(\''.BASE_URL.'/public/image/voltar.gif\');}';
+$html.= '.salvar{background-image:url(\''.BASE_URL.'/public/image/salvar.gif\');}';
+$html.= '#minButton{margin:0px;margin-top:20px;margin-left:2px;display:block;height:17px;width:17px;float:left;}';
+$html.= '.adicionar{background-image:url(\''.BASE_URL.'/public/image/adicionar.gif\');}';
+$html.= '.visualizar{background-image:url(\''.BASE_URL.'/public/image/visualizar.gif\');}';
+$html.= '</style>';
+
+echo($html);
+
+?>
+<?=$this->js?>

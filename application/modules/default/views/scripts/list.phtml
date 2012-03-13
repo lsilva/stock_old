@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC “-//W3C//DTD HTML 4.01 Strict//EN” “http://www.w3.org/TR/html4/strict.dtd”>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title><?=$this->title?></title>
+</head>
+<body>
+<h1><?=$this->title?></h1>
+<p><a href="<?=$this->insertLink?>">Incluir</a></p>
+<?=$this->searchForm?>
+<?=$this->table?>
+<a href="<?=$this->listLink.'/1'?>">Primeiro</a>
+<a href="<?=$this->listLink.'/'.($this->currentPage-1)?>">Anterior</a>
+<a href="<?=$this->listLink.'/'.($this->currentPage+1)?>">Próximo</a>
+<a href="<?=$this->listLink.'/'.($this->lastPage+1)?>">Último</a>
+</body>
+</html>
