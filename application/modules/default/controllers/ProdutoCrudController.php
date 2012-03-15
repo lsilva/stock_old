@@ -73,19 +73,18 @@ class ProdutoCrudController extends Fgsl_Crud_Controller_Abstract
 	public function getnomeAction()
 	{
 	  $this->_helper->layout->disableLayout();
-    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Data no passado
-    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // sempre modificado
-    header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-    header("Pragma: no-cache"); // HTTP/1.0
-    header("Content-Type: application/json; charset=iso-8859-1");
-var_dump($_REQUEST);exit;
-    $select = $this->_model->getAdapter()->select();
-    $select->from($this->_model->getName(),array("pro_id","pro_nome"));
-    if($where!="")
-      $select->where($where);
-    $record = $this->_model->fetchAllAsArray($select);
+  	header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+  	header ("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
+  	header ("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+  	header ("Pragma: no-cache"); // HTTP/1.0
+  	header("Content-Type: application/json");
 
-	  die(Zend_Json::encode($record));
+    $select = $this->_model->getAdapter()->select();
+    $select->from($this->_model->getName(),array("pro_id AS value2","pro_nome AS value","pro_nome AS label"));
+    $select->where("pro_nome LIKE '%".$_GET['term']."%'");
+
+    $records = $this->_model->fetchAllAsArray($select);
+	  die(Zend_Json::encode($records));
 	}
 	}
 

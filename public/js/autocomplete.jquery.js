@@ -257,7 +257,7 @@
 						self.field.removeClass('ac_field_busy').addClass('ac_field');
 
 					}
-					
+					alert(req.results);
 					self.setSuggestions(req,input);
 				},
 				error:	(typeof self.options.onAjaxError == 'function') ? function(status) {

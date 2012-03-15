@@ -40,13 +40,14 @@ if($this->tipo == 'ent')
   }
 
 $html.= ' 	<tr>';
-$html.= '			<td><input type="text" name="txtAutosuggest" id="txtAutosuggest" value="" autocomplete="off" />
-</td>';
 $html.= '			<td>'.$formProduto->pro_nome.'</td>';
 $html.= '			<td width="20px"><div id="minButton" class="adicionar" onClick="openWindow(\''.BASE_URL.'/default/produto-crud/insert\',\'Inserir produto\')"></div></td>';
 $html.= '			<td width="20px"><div id="minButton" class="visualizar"></div></td>';
 $html.= ' 	</tr>';
 
+$html.= ' 	<tr>';
+$html.= '			<td><div name="tblItem" id="tblItem"></div></td>';
+$html.= ' 	</tr>';
 /*
 $html.= ' 	<tr><td colspan="100%">';
 $html.= '			<table width="100%"><tr>';
@@ -113,35 +114,17 @@ $html.= '.salvar{background-image:url(\''.BASE_URL.'/public/image/salvar.gif\');
 $html.= '#minButton{margin:0px;margin-top:20px;margin-left:2px;display:block;height:17px;width:17px;float:left;}';
 $html.= '.adicionar{background-image:url(\''.BASE_URL.'/public/image/adicionar.gif\');}';
 $html.= '.visualizar{background-image:url(\''.BASE_URL.'/public/image/visualizar.gif\');}';
-
-$html.= 'div.suggestions {';
-$html.= '    -moz-box-sizing: border-box;';
-$html.= '    box-sizing: border-box;';
-$html.= '    background-color: white;';
-$html.= '    border: 1px solid black;';
-$html.= '    position: absolute;';
-$html.= '}';
-
-$html.= 'div.suggestions div {';
-$html.= '    cursor: default;';
-$html.= '    padding: 0px 3px;';
-$html.= '}';
-
-$html.= 'div.suggestions div.current {';
-$html.= '    background-color: #3366cc;';
-$html.= '    color: white;';
-$html.= '}';
-
 $html.= '</style>';
 
-$html.= '<script type="text/javascript" src="'.BASE_URL.'/public/js/auto_suggest.js"></script>';
-$html.= '		<script type="text/javascript">
-		{
-			window.onload = function () {
-				var oTextbox = new AutoSuggestControl(document.getElementById("txtAutosuggest"), new SuggestionProvider());
-			}
-		}
+$html.= '<script type="text/javascript">
+          $(document).ready(function(){
+            $(\'#pro_nome\').autocomplete(
+            {
+              source: path_url+\'/produto-crud/getnome\',
+              minLength: 2,
+              select: function(event, ui) { $(\'#pro_nome\').attr(\'selector\',ui.item.value2); }
+            });
+          });
 		</script>';
 echo($html);
-
 ?>
